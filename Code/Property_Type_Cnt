@@ -1,0 +1,1 @@
+SELECT property_desc, count(*) as cnt FROM clt_crime.2013_Property group by property_desc order by cnt desc;

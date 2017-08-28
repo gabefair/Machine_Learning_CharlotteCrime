@@ -1,0 +1,17 @@
+SELECT Complaint_no,
+max(case when  upper(Weapon_Type) like '%PERSONAL%' then 1 else 0 end) AS PERSONAL_FLAG,
+max(case when  upper(Weapon_Type) like '%GUN%' 
+				OR upper(Weapon_Type) like '%RIFLE%' 
+				OR upper(Weapon_Type) like '%FIREARM%'then 1 else 0 end) AS GUN_FLAG,
+max(case when  upper(Weapon_Type) like '%KNIFE%'
+				OR upper(Weapon_Type) like '%CUTTING%'
+				OR upper(Weapon_Type) like '%RAZOR%'
+				OR upper(Weapon_Type) like '%PUNCTURING%'
+				OR upper(Weapon_Type) like '%AX%'
+then 1 else 0 end) AS KNIFE_FLAG
+ FROM (SELECT * FROM clt_crime.2012_Weapons UNION
+SELECT * FROM clt_crime.2013_Weapons UNION
+SELECT * FROM clt_crime.2014_Weapons) A
+WHERE COMPLAINT_NO IS NOT NULL
+
+group by 1;

@@ -1,0 +1,28 @@
+
+SELECT 
+    COMPLAINT_NO, 
+  MAX(case when upper(victim_bus_type) = 'BUSINESS' THEN 1 ELSE 0 END) AS BUSINESS_FLAG,
+ MAX(case when upper(victim_bus_type) = 'SOCIETY/PUBLIC' THEN 1 ELSE 0 END) AS PUBLIC_FLAG,
+MAX(case when upper(victim_bus_type) LIKE '%GOVERNMENT%' THEN 1 ELSE 0 END) AS GOVT_FLAG,
+MAX(case when upper(victim_bus_type) = 'FINANCIAL INSTITUTE' THEN 1 ELSE 0 END) AS FIN_FLAG,
+MAX(case when upper(victim_bus_type) LIKE'%RELIGIOUS%' THEN 1 ELSE 0 END) AS RELG_FLAG,
+max(case when UPPER(victim_bus_legalname) like '%WAL%' and UPPER(victim_bus_legalname) like '%MART%' THEN 1 ELSE 0 END) AS WALMART_FLAG,
+max(case when UPPER(victim_bus_legalname) like '%BANK OF AMERICA%' 
+		OR UPPER(victim_bus_legalname) like '%WELLS FARGO%' 
+		OR UPPER(victim_bus_legalname) like '%BB&T%'
+		OR UPPER(victim_bus_legalname) like '%BANK%' THEN 1 ELSE 0 END) AS BANK_FLAG, 
+max(case when UPPER(victim_bus_legalname) like '%STATE%' and 
+	(UPPER(victim_bus_legalname) like '%NORTH CAROLINA%' OR UPPER(victim_bus_legalname) like '%NC%')
+		THEN 1 ELSE 0 END) AS NCSTATE_FLAG,
+max(case when UPPER(victim_bus_legalname) like '%CHARLOTTE%' and 
+	(UPPER(victim_bus_legalname) like '%EDUCATION%' OR UPPER(victim_bus_legalname) like '%SCHOOL%' or 
+		UPPER(victim_bus_legalname) like '%CITY%')
+		THEN 1 ELSE 0 END) AS CMS_FLAG
+    
+FROM (SELECT COMPLAINT_NO, VICTIM_BUS_TYPE, Victim_Bus_legalName FROM `clt_crime`.`2012_Victim_Business` UNION
+SELECT COMPLAINT_NO, VICTIM_BUS_TYPE, Victim_Bus_legalName  FROM `clt_crime`.`2013_Victim_Business` UNION
+SELECT COMPLAINT_NO, VICTIM_BUS_TYPE, Victim_Bus_legalName  FROM `clt_crime`.`2014_Victim_Business` ) a
+
+WHERE COMPLAINT_NO <> 0
+group by     COMPLAINT_NO
+

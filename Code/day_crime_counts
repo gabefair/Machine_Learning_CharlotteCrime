@@ -1,0 +1,32 @@
+#create table clt_crime.running_crime_cnt_7day as
+
+select
+a.date,
+a.category,
+sum(coalesce(b.cnt,0)) as daily_avg
+
+
+from (select date(Reported_Date) as date,  category, count(*) as cnt 
+from (select Reported_Date, Category from Incident_Data_2014 union
+		select Reported_Date, Category from Incident_Data_2013 union
+select Reported_Date, Category from Incident_Data_2012) a
+
+/*where date(Reported_Date) BETWEEN (date(Reported_Date) - 7) and (date(Reported_Date) - 1)*/  
+group by 1, 2 
+ order by 1 ) a
+
+left join (select date(Reported_Date) as date,  category, count(*) as cnt 
+from (select Reported_Date, Category from Incident_Data_2014 union
+		select Reported_Date, Category from Incident_Data_2013 union
+select Reported_Date, Category from Incident_Data_2012) a/*where date(Reported_Date) BETWEEN (date(Reported_Date) - 7) and (date(Reported_Date) - 1)*/  
+group by 1, 2 
+ order by 1 ) b
+
+on b.date between (a.date - 7) and (a.date - 1) and a.category = b.category
+
+group by 
+a.date
+,
+a.category
+
+ORDER BY 1

@@ -1,0 +1,3 @@
+SELECT victim_age, count(*) as cnt FROM clt_crime.2013_Victim_Person
+group by victim_age 
+order by victim_age;

@@ -1,0 +1,44 @@
+create table  clt_crime.person_victim_all as
+
+select complaint_no, max(case when victim_race = 'Black' then 1 else 0 end) as Black_Victim,
+max(case when victim_race = 'Unknown' or victim_race is null then 1 else 0 end) as Unknown_Victim,
+max(case when victim_race = 'White' and victim_ethnicity <> 'Hispanic/Latino' then 1 else 0 end) as White_Victim,
+max(case when victim_race = 'White' and victim_ethnicity = 'Hispanic/Latino' then 1 else 0 end) as Hispanic_Victim,
+max(case when victim_race = 'Asian or Pacific islander ' then 1 else 0 end) as Asian_Victim,
+max(case when victim_race = 'American Indian/Alaskan Native' then 1 else 0 end) as Indian_Victim,
+max(Victim_age) as Max_Victim_Age,
+min(Victim_age) as Min_Victim_Age,
+max(case when  upper(Incapacity_Types) like '%ALCOHOL%' then 1 else 0 end) AS ALCOHOL_FLAG,
+max(case when  upper(Incapacity_Types) like '%DRUGS%' 
+				OR upper(Incapacity_Types) like '%MARIJUANA%' then 1 else 0 end) AS DRUGS_FLAG,
+max(case when  upper(Incapacity_Types) like '%MENTAL%'
+				OR upper(Incapacity_Types) like '%SCHIZOPHREN%'
+				OR upper(Incapacity_Types) like '%MENTAL%'
+				OR upper(Incapacity_Types) like '%BIPOLAR%'
+				OR upper(Incapacity_Types) like '%AUTISTIC%'
+				OR upper(Incapacity_Types) like '%ANXIETY%'
+				OR upper(Incapacity_Types) like '%PTSD%'
+				OR upper(Incapacity_Types) like '%MOOD%'
+				OR upper(Incapacity_Types) like '%DEPRESSION%'
+then 1 else 0 end) AS MENTAL_FLAG,
+max(case when  upper(Incapacity_Types) like '%OLD AGE%'
+				or upper(Incapacity_Types) like '%DEMENTIA%'
+				or upper(Incapacity_Types) like '%ALZHEIMER%' THEN 1 ELSE 0 END) AS ELDERLY_FLAG,
+max(case when  upper(Incapacity_Types) like '%POOR HEALTH%'
+				or upper(Incapacity_Types) like '%PHYSICAL%'
+				or upper(Incapacity_Types) like '%SIGHT%' 
+				or upper(Incapacity_Types) like '%HEARING%' 
+				or upper(Incapacity_Types) like '%SPEECH%' 
+				or upper(Incapacity_Types) like '%DISABLED%' THEN 1 ELSE 0 END) AS PHYSICAL_FLAG,
+max(case when  upper(victim_medical_treat) like '%REFUSED%'
+				THEN 1 ELSE 0 END) AS REFUSED_TREAT_FLAG
+
+
+
+from (SELECT complaint_no, victim_race, Victim_Age, victim_ethnicity, incapacity_types, victim_medical_treat FROM `clt_crime`.`2012_victim_person` A
+union
+SELECT complaint_no, victim_race, Victim_Age, victim_ethnicity, incapacity_types, victim_medical_treat FROM `clt_crime`.`2013_Victim_Person` B
+union
+SELECT complaint_no, victim_race, Victim_Age, victim_ethnicity, incapacity_types, victim_medical_treat FROM `clt_crime`.`2014_Victim_Person` C) A
+
+group by 1

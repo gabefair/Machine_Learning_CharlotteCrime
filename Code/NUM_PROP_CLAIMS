@@ -1,0 +1,8 @@
+select
+cnt as property_claims,
+count(complaint_no) as total_cnt
+from
+(SELECT complaint_no, max(property_no) as cnt FROM clt_crime.2012_Property group by complaint_no) a
+
+group by cnt
+order by cnt

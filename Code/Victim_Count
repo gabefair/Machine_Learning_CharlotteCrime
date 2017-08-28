@@ -1,0 +1,26 @@
+select
+complaint_no,
+sum(case when relationship = 'Within Family' then Victim_Cnt
+	else 0 end) as Within_Family_Victim_Cnt,
+sum(case when relationship = 'Outside Family' then Victim_Cnt
+	else 0 end) as Outside_Family_Victim_Cnt,
+sum(case when relationship = 'Not Known to Victim' then Victim_Cnt
+	else 0 end) as Unknown_Victim_Cnt,
+sum(case when relationship = 'Within Family' then Suspect_Cnt
+	else 0 end) as Within_Family_Suspect_Cnt,
+sum(case when relationship = 'Outside Family' then Suspect_Cnt
+	else 0 end) as Outside_Family_Suspect_Cnt,
+sum(case when relationship = 'Not Known to Victim' then Suspect_Cnt
+	else 0 end) as Unknown_Suspect_Cnt
+
+
+from(
+SELECT Complaint_no, relationship
+, count(distinct(victim_no)) as Victim_Cnt
+, count(distinct(suspect_no)) as Suspect_Cnt 
+
+FROM clt_crime.2014_Victim_Suspect_Relation
+where complaint_no is not null
+group by Complaint_no, relationship) a
+
+group by complaint_no
