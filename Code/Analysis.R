@@ -1,5 +1,4 @@
-# Ryan's Working Directory
-setwd("~/../Dropbox/Machine Learning Project/Data")
+
 setwd("~/Dropbox/Machine Learning Project/Data/google_refine_cleaned_xlsx")
 options(java.parameters = "-Xmx8192m")
 library(rJava) 
